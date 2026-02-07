@@ -3,7 +3,7 @@ session_start();
 $host = 'localhost';
 $db = 'dbOOGRecord';
 $user = 'root'; // Your database username
-$pass = 'root'; // Your database password
+$pass = ''; // Your database password
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
