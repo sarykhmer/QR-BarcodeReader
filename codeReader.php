@@ -93,9 +93,9 @@ $tiemScan = $_GET['timeScan'] ?? '';
         #btnScan {
             color: green;
             border: none;
-            border-radius: 25px;
+            border-radius: 50%;
             width: 150px;
-            height: 100px;
+            height: 150px;
         }
     </style>
 </head>
