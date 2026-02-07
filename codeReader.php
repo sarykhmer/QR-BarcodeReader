@@ -1,8 +1,8 @@
 <?php
 require 'checkRole.php';
 if (!isset($_SESSION['recordID'])) {
-    // header("Location: login.php");
-    // exit();
+    header("Location: createRecord_form.php");
+    exit();
 }
 
 $recordID = $_SESSION['recordID'] ?? '';
@@ -103,7 +103,7 @@ $tiemScan = $_GET['timeScan'] ?? '';
 <body>
     <div class="container">
         <div class="input">
-            <input type="text" id="inputCode">
+            <input type="text" id="inputCode" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
             <button id="btnSubmit" onclick="submitCode()">➡️</button>
         </div>
         <div class="result">
@@ -118,9 +118,6 @@ $tiemScan = $_GET['timeScan'] ?? '';
         </div>
         <div class="scan">
             <button onclick="startScanner()" id="btnScan">Scan</button>
-        </div>
-        <div class="reload">
-            <button onclick="location.reload()">🔄 Reload Page</button>
         </div>
     </div>
 
