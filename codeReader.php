@@ -1,3 +1,14 @@
+<?php
+require 'checkRole.php';
+if (!isset($_SESSION['recordID'])) {
+    // header("Location: login.php");
+    // exit();
+}
+
+$recordID = $_SESSION['recordID'] ?? '';
+$sNumber = $_GET['code'] ?? '';
+$tiemScan = $_GET['timeScan'] ?? '';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,7 +18,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- html5-qrcode library -->
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="js/html5-qrcode.min.js"></script>
 
     <style>
         body {
@@ -20,6 +31,24 @@
             width: 100%;
             max-width: 600px;
             margin: auto;
+        }
+
+        .input {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        #inputCode {
+            width: 80%;
+            font-size: 18px;
+            text-align: center;
+            float: left;
+        }
+
+        #btnSubmit {
+            width: 18%;
+            background-color: green;
+            border-radius: 10px;
         }
 
         #reader {
@@ -51,8 +80,6 @@
         }
 
         button {
-            margin-top: 10px;
-            padding: 10px 20px;
             font-size: 18px;
         }
 
@@ -75,6 +102,10 @@
 
 <body>
     <div class="container">
+        <div class="input">
+            <input type="text" id="inputCode">
+            <button id="btnSubmit" onclick="submitCode()">➡️</button>
+        </div>
         <div class="result">
             <h2 id="result">📷 Barcode / QR Code Scanner</h2>
             <h2 id="time"></h2>
@@ -200,12 +231,15 @@
             });
         }
 
-        function onScanSuccess(decodedText, decodedResult) {
+        function timeNow() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
-            timeScan = hours + ":" + minutes;
+            return hours + ":" + minutes;
+        }
 
+        function onScanSuccess(decodedText, decodedResult) {
+            timeScan = timeNow();
             result.textContent = decodedText;
             timeDisplay.textContent = "Time: " + timeScan;
             console.log(decodedResult);
@@ -215,9 +249,28 @@
                     code: decodedText,
                     timeScan: timeScan
                 });
-                window.location.href = 'barcodeReader.php?' + params.toString();
+                window.location.href = 'codeReader.php?' + params.toString();
             });
         }
+
+        const inputCode = document.getElementById("inputCode");
+
+        function submitCode() {
+            const code = inputCode.value.trim();
+            if (code) {
+                timeScan = timeNow();
+                const params = new URLSearchParams({
+                    code: code,
+                    timeScan: timeScan
+                });
+                window.location.href = 'codeReader.php?' + params.toString();
+            }
+        }
+        inputCode.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                submitCode();
+            }
+        });
     </script>
 
 </body>
