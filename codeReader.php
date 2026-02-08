@@ -5,9 +5,50 @@ if (!isset($_SESSION['recordID'])) {
     exit();
 }
 
-$recordID = $_SESSION['recordID'] ?? '';
-$sNumber = $_GET['code'] ?? '';
-$tiemScan = $_GET['timeScan'] ?? '';
+$recordID = $_SESSION['recordID'];
+$recordType = $_SESSION['recordType'];
+if (isset($_GET['code']) && isset($_GET['timeScan'])) {
+
+    $code = trim($_GET['code']);
+    $timeScan = $_GET['timeScan'];
+    $unit = $_GET['unit'] ?? '1pc';
+
+    // restrive code in database
+    $stmt_retrive = $pdo->prepare("SELECT * FROM tblDetail WHERE recordID = ? AND sNumber = ?");
+    $stmt_retrive->execute([$recordID, $code]);
+    $exist = $stmt_retrive->fetch(PDO::FETCH_ASSOC);
+    // if code don't exist, insert new record
+    if (!$exist) {
+        try {
+            $stmt_insert = $pdo->prepare("INSERT INTO tblDetail (recordID, sNumber, rTime, unit) VALUES (?, ?, ?, ?)");
+            $stmt_insert->execute([$recordID, $code, $timeScan, $unit]);
+        } catch (PDOException $e) {
+            // Handle the error, e.g., log it and show a user-friendly message
+            error_log("Database error: " . $e->getMessage());
+            die("An error occurred while inserting the record! <br> " . $e);
+        }
+    } elseif ($exist && $recordType == 1) {
+        // if code exist, update dTime
+        try {
+            $stmt_update = $pdo->prepare("UPDATE tblDetail SET dTime = ? WHERE recordID = ? AND sNumber = ?");
+            $stmt_update->execute([$timeScan, $recordID, $code]);
+        } catch (PDOException $e) {
+            // Handle the error, e.g., log it and show a user-friendly message
+            error_log("Database error: " . $e->getMessage());
+            die("An error occurred while updating the record! <br> " . $e);
+        }
+    } elseif ($exist && $recordType == 2) {
+        // if code exist, update rTime
+        try {
+            $stmt_update = $pdo->prepare("UPDATE tblDetail SET cgTime = ? WHERE recordID = ? AND sNumber = ?");
+            $stmt_update->execute([$timeScan, $recordID, $code]);
+        } catch (PDOException $e) {
+            // Handle the error, e.g., log it and show a user-friendly message
+            error_log("Database error: " . $e->getMessage());
+            die("An error occurred while updating the record! <br> " . $e);
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,8 +79,14 @@ $tiemScan = $_GET['timeScan'] ?? '';
             width: 100%;
         }
 
+        #unit {
+            width: 20%;
+            font-size: 18px;
+            float: left;
+        }
+
         #inputCode {
-            width: 80%;
+            width: 60%;
             font-size: 18px;
             text-align: center;
             float: left;
@@ -103,6 +150,17 @@ $tiemScan = $_GET['timeScan'] ?? '';
 <body>
     <div class="container">
         <div class="input">
+            <select name="unit" id="unit">
+                <?php
+                $retrive_unit = $pdo->prepare("SELECT * FROM tblUnit");
+                $retrive_unit->execute();
+                $units = $retrive_unit->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($units as $unit) {
+                    echo "<option value='" . $unit['unitName'] . "'>" . $unit['unitName'] . "</option>";
+                }
+                ?>
+            </select>
+
             <input type="text" id="inputCode" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
             <button id="btnSubmit" onclick="submitCode()">➡️</button>
         </div>
@@ -235,6 +293,10 @@ $tiemScan = $_GET['timeScan'] ?? '';
             return hours + ":" + minutes;
         }
 
+        const inputCode = document.getElementById("inputCode");
+        const decodedText = inputCode.value.trim();
+        const unit = document.getElementById("unit").value;
+
         function onScanSuccess(decodedText, decodedResult) {
             timeScan = timeNow();
             result.textContent = decodedText;
@@ -242,30 +304,24 @@ $tiemScan = $_GET['timeScan'] ?? '';
             console.log(decodedResult);
             // Stop scanning (best-effort), then redirect with code and timeScan params
             html5QrCode.stop().catch(() => {}).then(() => {
-                const params = new URLSearchParams({
-                    code: decodedText,
-                    timeScan: timeScan
-                });
-                window.location.href = 'codeReader.php?' + params.toString();
+                submitCode(decodedText, unit);
             });
         }
 
-        const inputCode = document.getElementById("inputCode");
-
-        function submitCode() {
-            const code = inputCode.value.trim();
-            if (code) {
-                timeScan = timeNow();
+        function submitCode(decodedText, unit) {
+            timeScan = timeNow();
+            if (decodedText) {
                 const params = new URLSearchParams({
-                    code: code,
-                    timeScan: timeScan
+                    code: decodedText,
+                    timeScan: timeScan,
+                    unit: unit
                 });
                 window.location.href = 'codeReader.php?' + params.toString();
             }
         }
         inputCode.addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
-                submitCode();
+                submitCode(inputCode.value.trim(), unit);
             }
         });
     </script>

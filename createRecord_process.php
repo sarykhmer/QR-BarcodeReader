@@ -5,11 +5,14 @@ if (isset($_POST['date']) && isset($_POST['type'])) {
     $typeID = $_POST['type'];
 
     $stmt = $pdo->prepare("INSERT INTO tblrecord (typeID, date) VALUES (?, ?)");
-    $stmt->execute([$typeID, $date]);
+    $success = $stmt->execute([$typeID, $date]);
     $recordID = $pdo->lastInsertId();
 
-    session_start();
-    $_SESSION['recordID'] = $recordID;
+    if ($success) {
+        session_start();
+        $_SESSION['recordID'] = $recordID;
+        $_SESSION['recordType'] = $typeID;
+    }
 
     header("Location: codeReader.php");
     exit();
