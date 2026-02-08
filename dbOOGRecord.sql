@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Feb 06, 2026 at 08:56 PM
+-- Generation Time: Feb 08, 2026 at 10:37 AM
 -- Server version: 8.0.40
 -- PHP Version: 8.3.14
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `dbOOGRecord`
 --
+CREATE DATABASE IF NOT EXISTS `dbOOGRecord` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE `dbOOGRecord`;
 
 -- --------------------------------------------------------
 
@@ -28,11 +30,12 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `tblDetail` (
-  `sNumber` int NOT NULL,
+  `detailID` int NOT NULL,
   `recordID` int NOT NULL,
-  `airline` varchar(25) NOT NULL,
-  `fNumber` varchar(10) NOT NULL,
-  `unit` int NOT NULL,
+  `sNumber` text NOT NULL,
+  `airline` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `fNumber` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `unit` varchar(10) NOT NULL,
   `rTime` time NOT NULL,
   `dTime` time DEFAULT NULL,
   `cgTime` time DEFAULT NULL,
@@ -64,6 +67,39 @@ CREATE TABLE `tblType` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
+-- Dumping data for table `tblType`
+--
+
+INSERT INTO `tblType` (`typeID`, `type`) VALUES
+(1, 'Departure'),
+(2, 'Arrival');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tblUnit`
+--
+
+CREATE TABLE `tblUnit` (
+  `unitID` int NOT NULL,
+  `unitName` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `tblUnit`
+--
+
+INSERT INTO `tblUnit` (`unitID`, `unitName`) VALUES
+(1, '1pc'),
+(2, '1Wch'),
+(3, '1Box'),
+(4, '1Goal bag'),
+(5, '1Dog'),
+(6, '1Cat'),
+(7, '1Bag'),
+(8, '1Baby Stroller');
+
+--
 -- Indexes for dumped tables
 --
 
@@ -71,7 +107,7 @@ CREATE TABLE `tblType` (
 -- Indexes for table `tblDetail`
 --
 ALTER TABLE `tblDetail`
-  ADD PRIMARY KEY (`sNumber`),
+  ADD PRIMARY KEY (`detailID`),
   ADD KEY `fk_record_detail` (`recordID`);
 
 --
@@ -88,8 +124,20 @@ ALTER TABLE `tblType`
   ADD PRIMARY KEY (`typeID`);
 
 --
+-- Indexes for table `tblUnit`
+--
+ALTER TABLE `tblUnit`
+  ADD PRIMARY KEY (`unitID`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `tblDetail`
+--
+ALTER TABLE `tblDetail`
+  MODIFY `detailID` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tblRecord`
@@ -101,7 +149,13 @@ ALTER TABLE `tblRecord`
 -- AUTO_INCREMENT for table `tblType`
 --
 ALTER TABLE `tblType`
-  MODIFY `typeID` int NOT NULL AUTO_INCREMENT;
+  MODIFY `typeID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `tblUnit`
+--
+ALTER TABLE `tblUnit`
+  MODIFY `unitID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables
