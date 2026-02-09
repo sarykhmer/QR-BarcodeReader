@@ -11,7 +11,7 @@ if (isset($_POST['date']) && isset($_POST['type'])) {
     if ($success) {
         session_start();
         $_SESSION['recordID'] = $recordID;
-        $_SESSION['recordType'] = $typeID;
+        $_SESSION['typeID'] = $typeID;
     }
 
     header("Location: codeReader.php");
@@ -19,9 +19,11 @@ if (isset($_POST['date']) && isset($_POST['type'])) {
 } else {
     $recordID = $_GET['recordID'] ?? null;
     $typeID = $_GET['typeID'] ?? null;
+    $recordName = $_GET['name'] ?? null;
     session_start();
     $_SESSION['recordID'] = $recordID;
-    $_SESSION['recordType'] = $typeID;
+    $_SESSION['typeID'] = $typeID;
+    $_SESSION['recordName'] = $recordName;
     header("Location: codeReader.php");
     exit();
 }

@@ -6,7 +6,8 @@ if (!isset($_SESSION['recordID'])) {
 }
 
 $recordID = $_SESSION['recordID'];
-$recordType = $_SESSION['recordType'];
+$typeID = $_SESSION['typeID'];
+$recordName = $_SESSION['recordName'] ?? 'Unknown Record';
 if (isset($_GET['code']) && isset($_GET['timeScan'])) {
 
     $code = trim($_GET['code']);
@@ -27,7 +28,7 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             error_log("Database error: " . $e->getMessage());
             die("An error occurred while inserting the record! <br> " . $e);
         }
-    } elseif ($exist && $recordType == 1) {
+    } elseif ($exist && $typeID == 1) {
         // if code exist, update dTime
         try {
             $stmt_update = $pdo->prepare("UPDATE tblDetail SET dTime = ? WHERE recordID = ? AND sNumber = ?");
@@ -37,7 +38,7 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             error_log("Database error: " . $e->getMessage());
             die("An error occurred while updating the record! <br> " . $e);
         }
-    } elseif ($exist && $recordType == 2) {
+    } elseif ($exist && $typeID == 2) {
         // if code exist, update rTime
         try {
             $stmt_update = $pdo->prepare("UPDATE tblDetail SET cgTime = ? WHERE recordID = ? AND sNumber = ?");
@@ -149,6 +150,9 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
 
 <body>
     <div class="container">
+        <div class="name">
+            <p><?= htmlspecialchars($recordName) ?></p>
+        </div>
         <div class="input">
             <select name="unit" id="unit">
                 <?php
