@@ -31,6 +31,12 @@ $types = $stmt->fetchAll(PDO::FETCH_ASSOC);
             width: 100%;
         }
 
+        .table {
+            margin-top: 30px;
+            position: relative;
+            text-align: center;
+        }
+
         button {
             background-color: green;
             border-radius: 10px;
@@ -60,7 +66,27 @@ $types = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </select>
             </div>
             <div class="submit">
-                <button type="submit">Submit</button>
+                <button type="submit">New Record</button>
+            </div>
+            <div class="table">
+                <table style="position: relative; margin: auto;">
+                    <thead>
+                        <th colspan="2">Open old Record</th>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $stmt = $pdo->prepare("SELECT r.*, t.type FROM tblRecord r JOIN tblType t ON r.typeID = t.typeID ORDER BY date DESC");
+                        $stmt->execute();
+                        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        foreach ($records as $record) :
+                        ?>
+                            <tr>
+                                <td><?= $record['date'] . " " . $record['type'] ?></td>
+                                <td><a href="createRecord_process.php?recordID=<?= $record['recordID'] ?>&typeID=<?= $record['typeID'] ?>">Open</a></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
         </form>
     </div>

@@ -17,6 +17,11 @@ if (isset($_POST['date']) && isset($_POST['type'])) {
     header("Location: codeReader.php");
     exit();
 } else {
-    header("Location: createRecord_form.php");
+    $recordID = $_GET['recordID'] ?? null;
+    $typeID = $_GET['typeID'] ?? null;
+    session_start();
+    $_SESSION['recordID'] = $recordID;
+    $_SESSION['recordType'] = $typeID;
+    header("Location: codeReader.php");
     exit();
 }
