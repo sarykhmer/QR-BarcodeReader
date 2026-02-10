@@ -12,7 +12,7 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
 
     $code = trim($_GET['code']);
     $timeScan = $_GET['timeScan'];
-    $unit = $_GET['unit'] ?? '1pc';
+    $unit = $_GET['unit'] ?? '0';
 
     // restrive code in database
     $stmt_retrive = $pdo->prepare("SELECT * FROM tblDetail WHERE recordID = ? AND sNumber = ?");
@@ -159,6 +159,9 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
                 $retrive_unit = $pdo->prepare("SELECT * FROM tblUnit");
                 $retrive_unit->execute();
                 $units = $retrive_unit->fetchAll(PDO::FETCH_ASSOC);
+                if (isset($_GET['unit'])) {
+                    echo "<option value='" . htmlspecialchars($unit) . "' selected> " . htmlspecialchars($unit) . "</option>";
+                }
                 foreach ($units as $unit) {
                     echo "<option value='" . $unit['unitName'] . "'>" . $unit['unitName'] . "</option>";
                 }
@@ -166,7 +169,7 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             </select>
 
             <input type="text" id="inputCode" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-            <button id="btnSubmit" onclick="submitCode()">➡️</button>
+            <button id="btnSubmit" onclick="btnSubmit()">➡️</button>
         </div>
         <div class="result">
             <h2 id="result">📷 Barcode / QR Code Scanner</h2>
@@ -298,8 +301,10 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
         }
 
         const inputCode = document.getElementById("inputCode");
-        const decodedText = inputCode.value.trim();
-        const unit = document.getElementById("unit").value;
+        const selectUnit = document.getElementById("unit");
+        selectUnit.addEventListener("change", () => {
+            unit = selectUnit.value;
+        });
 
         function onScanSuccess(decodedText, decodedResult) {
             timeScan = timeNow();
@@ -325,9 +330,15 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
         }
         inputCode.addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
-                submitCode(inputCode.value.trim(), unit);
+                const decodedText = inputCode.value.trim();
+                submitCode(decodedText, unit);
             }
         });
+
+        function btnSubmit() {
+            const decodedText = inputCode.value.trim();
+            submitCode(decodedText, unit);
+        }
     </script>
 
 </body>
