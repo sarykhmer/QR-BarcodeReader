@@ -76,8 +76,8 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
         }
 
         .input {
-            margin-top: 20px;
             width: 100%;
+            margin-top: 20px;
         }
 
         #unit {
@@ -87,27 +87,24 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
         }
 
         #inputCode {
-            width: 60%;
+            width: 70%;
             font-size: 18px;
             text-align: center;
             float: left;
         }
 
-        #btnSubmit {
-            width: 18%;
-            background-color: green;
-            border-radius: 10px;
+        .reader{
+            width: 100%;
+            height: 400px;
+            background: blue;
         }
-
         #reader {
             width: 100%;
-            height: 500px;
-            font-size: 25px;
-            color: green;
+            height: auto;
         }
 
         #result {
-            margin-top: 200px;
+            margin-top: 100px;
             position: absolute;
             z-index: 1000;
             color: green;
@@ -131,12 +128,20 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             font-size: 18px;
         }
 
-        .scan,
+        /* .scan,
         .flash {
             width: 100%;
             z-index: 999;
+            margin-top: 10px;
             position: relative;
-        }
+        } */
+            .controller{
+            width: 100%;
+            height: 400px;
+            display: flex;
+            background: black;
+            justify-content: center;
+            }
 
         #btnScan {
             color: green;
@@ -144,6 +149,26 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             border-radius: 50%;
             width: 150px;
             height: 150px;
+            margin-top: 30px;
+            position: absolute;
+            align-self: center;
+            z-index: 999;
+            bottom: 0;
+        }
+
+        #btnFlash {
+            border-radius: 20px;
+            width: 150px;
+            height: 30px;
+            margin-top: 30px;
+            z-index: 999;
+            position: absolute;
+        }
+
+        .name {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
         }
     </style>
 </head>
@@ -151,8 +176,20 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
 <body>
     <div class="container">
         <div class="name">
-            <p><?= htmlspecialchars($recordName) ?></p>
+            <p style="text-align: right"><?= htmlspecialchars($recordName) ?></p>
+            <button onclick="location.href='logout.php'" style="color: red; float: right; height: 30px;">Logout</button>
         </div>
+        
+        <div class="result">
+            <h2 id="result">📷 Barcode / QR Code Scanner</h2>
+            <h2 id="time"></h2>
+        </div>
+        <div class="reader">
+            <div id="reader">
+            </div>
+        </div>
+        
+        <div id="alert"></div>
         <div class="input">
             <select name="unit" id="unit">
                 <?php
@@ -169,19 +206,10 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             </select>
 
             <input type="text" id="inputCode" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-            <button id="btnSubmit" onclick="btnSubmit()">➡️</button>
         </div>
-        <div class="result">
-            <h2 id="result">📷 Barcode / QR Code Scanner</h2>
-            <h2 id="time"></h2>
-        </div>
-        <div id="reader">
-        </div>
-        <div id="alert"></div>
-        <div class="flash">
+        
+        <div class="controller">
             <button onclick="flashOn()" id="btnFlash">💡 Flash Off</button>
-        </div>
-        <div class="scan">
             <button onclick="startScanner()" id="btnScan">Scan</button>
         </div>
     </div>
@@ -302,6 +330,7 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
 
         const inputCode = document.getElementById("inputCode");
         const selectUnit = document.getElementById("unit");
+        let unit = selectUnit.value;
         selectUnit.addEventListener("change", () => {
             unit = selectUnit.value;
         });
