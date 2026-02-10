@@ -20,7 +20,7 @@ SET time_zone = "+00:00";
 --
 -- Database: `dbOOGRecord`
 --
-CREATE DATABASE IF NOT EXISTS `dbOOGRecord` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE DATABASE IF NOT EXISTS `dbOOGRecord`;
 USE `dbOOGRecord`;
 
 -- --------------------------------------------------------
@@ -33,15 +33,15 @@ CREATE TABLE `tblDetail` (
   `detailID` int NOT NULL,
   `recordID` int NOT NULL,
   `sNumber` text NOT NULL,
-  `airline` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `fNumber` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `airline` varchar(25) CHARACTER SET utf8mb4   DEFAULT NULL,
+  `fNumber` varchar(10) CHARACTER SET utf8mb4   DEFAULT NULL,
   `unit` varchar(10) NOT NULL,
   `rTime` time NOT NULL,
   `dTime` time DEFAULT NULL,
   `cgTime` time DEFAULT NULL,
   `total` int DEFAULT NULL,
   `remark` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4  ;
 
 -- --------------------------------------------------------
 
@@ -53,7 +53,7 @@ CREATE TABLE `tblRecord` (
   `recordID` int NOT NULL,
   `typeID` int NOT NULL,
   `date` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4  ;
 
 -- --------------------------------------------------------
 
@@ -64,7 +64,7 @@ CREATE TABLE `tblRecord` (
 CREATE TABLE `tblType` (
   `typeID` int NOT NULL,
   `type` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4  ;
 
 --
 -- Dumping data for table `tblType`
@@ -82,8 +82,8 @@ INSERT INTO `tblType` (`typeID`, `type`) VALUES
 
 CREATE TABLE `tblUnit` (
   `unitID` int NOT NULL,
-  `unitName` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `unitName` varchar(20) CHARACTER SET utf8mb4   NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4  ;
 
 --
 -- Dumping data for table `tblUnit`
