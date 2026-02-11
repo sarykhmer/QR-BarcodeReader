@@ -28,20 +28,10 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             error_log("Database error: " . $e->getMessage());
             die("An error occurred while inserting the record! <br> " . $e);
         }
-    } elseif ($exist && $typeID == 1) {
+    } elseif ($exist) {
         // if code exist, update dTime
         try {
             $stmt_update = $pdo->prepare("UPDATE tblDetail SET dTime = ? WHERE recordID = ? AND sNumber = ?");
-            $stmt_update->execute([$timeScan, $recordID, $code]);
-        } catch (PDOException $e) {
-            // Handle the error, e.g., log it and show a user-friendly message
-            error_log("Database error: " . $e->getMessage());
-            die("An error occurred while updating the record! <br> " . $e);
-        }
-    } elseif ($exist && $typeID == 2) {
-        // if code exist, update rTime
-        try {
-            $stmt_update = $pdo->prepare("UPDATE tblDetail SET cgTime = ? WHERE recordID = ? AND sNumber = ?");
             $stmt_update->execute([$timeScan, $recordID, $code]);
         } catch (PDOException $e) {
             // Handle the error, e.g., log it and show a user-friendly message
@@ -70,9 +60,16 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
 
         .container {
             position: relative;
-            width: 100%;
+            width: 100vw;
+            height: 100vh;
             max-width: 600px;
             margin: auto;
+        }
+
+        .view {
+            width: 100%;
+            height: auto;
+            position: relative;
         }
 
         .input {
@@ -93,11 +90,12 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             float: left;
         }
 
-        .reader{
+        .reader {
             width: 100%;
             height: 400px;
             background: blue;
         }
+
         #reader {
             width: 100%;
             height: auto;
@@ -128,20 +126,13 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             font-size: 18px;
         }
 
-        /* .scan,
-        .flash {
+        .controller {
             width: 100%;
-            z-index: 999;
-            margin-top: 10px;
-            position: relative;
-        } */
-            .controller{
-            width: 100%;
-            height: 400px;
+            height: auto;
             display: flex;
             background: black;
             justify-content: center;
-            }
+        }
 
         #btnScan {
             color: green;
@@ -175,39 +166,41 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
 
 <body>
     <div class="container">
-        <div class="name">
-            <p style="text-align: right"><?= htmlspecialchars($recordName) ?></p>
-            <button onclick="location.href='logout.php'" style="color: red; float: right; height: 30px;">Logout</button>
-        </div>
-        
-        <div class="result">
-            <h2 id="result">📷 Barcode / QR Code Scanner</h2>
-            <h2 id="time"></h2>
-        </div>
-        <div class="reader">
-            <div id="reader">
+        <div class="view">
+            <div class="name">
+                <p style="text-align: right"><?= htmlspecialchars($recordName) ?></p>
+                <button onclick="location.href='logout.php'" style="color: red; float: right; height: 30px;">Logout</button>
+            </div>
+
+            <div class="result">
+                <h2 id="result">📷 Barcode / QR Code Scanner</h2>
+                <h2 id="time"></h2>
+            </div>
+            <div class="reader">
+                <div id="reader">
+                </div>
+            </div>
+
+            <div id="alert"></div>
+            <div class="input">
+                <select name="unit" id="unit">
+                    <?php
+                    $retrive_unit = $pdo->prepare("SELECT * FROM tblUnit");
+                    $retrive_unit->execute();
+                    $units = $retrive_unit->fetchAll(PDO::FETCH_ASSOC);
+                    if (isset($_GET['unit'])) {
+                        echo "<option value='" . htmlspecialchars($unit) . "' selected> " . htmlspecialchars($unit) . "</option>";
+                    }
+                    foreach ($units as $unit) {
+                        echo "<option value='" . $unit['unitName'] . "'>" . $unit['unitName'] . "</option>";
+                    }
+                    ?>
+                </select>
+
+                <input type="text" id="inputCode" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
             </div>
         </div>
-        
-        <div id="alert"></div>
-        <div class="input">
-            <select name="unit" id="unit">
-                <?php
-                $retrive_unit = $pdo->prepare("SELECT * FROM tblUnit");
-                $retrive_unit->execute();
-                $units = $retrive_unit->fetchAll(PDO::FETCH_ASSOC);
-                if (isset($_GET['unit'])) {
-                    echo "<option value='" . htmlspecialchars($unit) . "' selected> " . htmlspecialchars($unit) . "</option>";
-                }
-                foreach ($units as $unit) {
-                    echo "<option value='" . $unit['unitName'] . "'>" . $unit['unitName'] . "</option>";
-                }
-                ?>
-            </select>
 
-            <input type="text" id="inputCode" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-        </div>
-        
         <div class="controller">
             <button onclick="flashOn()" id="btnFlash">💡 Flash Off</button>
             <button onclick="startScanner()" id="btnScan">Scan</button>
