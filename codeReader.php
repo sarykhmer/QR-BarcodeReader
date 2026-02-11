@@ -61,20 +61,40 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
         .container {
             position: relative;
             width: 100vw;
-            height: 100vh;
+            height: 90vh;
             max-width: 600px;
             margin: auto;
         }
 
+
         .view {
             width: 100%;
-            height: auto;
+            height: 70%;
             position: relative;
+        }
+
+        .name {
+            width: 100%;
+            display: flex;
+            margin-right: 10px;
+            margin-left: 10px;
+            justify-content: center;
+        }
+
+        #btnLogout {
+            color: red;
+            height: 30px;
+            position: absolute;
+            right: 10px;
+            top: 10px;
         }
 
         .input {
             width: 100%;
-            margin-top: 20px;
+            margin-right: 10px;
+            margin-left: 10px;
+            position: absolute;
+            bottom: 0;
         }
 
         #unit {
@@ -85,39 +105,38 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
 
         #inputCode {
             width: 70%;
+            border-radius: 20px;
             font-size: 18px;
             text-align: center;
             float: left;
         }
 
-        .reader {
-            width: 100%;
-            height: 400px;
-            background: blue;
-        }
-
         #reader {
             width: 100%;
-            height: auto;
+            z-index: 999;
         }
 
         #result {
-            margin-top: 100px;
-            position: absolute;
             z-index: 1000;
             color: green;
+            position: absolute;
         }
 
         #time {
-            margin-top: 260px;
-            position: absolute;
             z-index: 1000;
             color: green;
+            position: absolute;
+            margin-top: 60px;
+        }
+
+        #alert {
+            z-index: 1000;
+            margin-top: 100px;
+            position: absolute;
         }
 
         .result {
             width: 100%;
-            align-items: center;
             display: flex;
             justify-content: center;
         }
@@ -130,8 +149,8 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             width: 100%;
             height: auto;
             display: flex;
-            background: black;
             justify-content: center;
+            background-color: green;
         }
 
         #btnScan {
@@ -140,7 +159,7 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             border-radius: 50%;
             width: 150px;
             height: 150px;
-            margin-top: 30px;
+            margin-top: 10px;
             position: absolute;
             align-self: center;
             z-index: 999;
@@ -151,15 +170,9 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             border-radius: 20px;
             width: 150px;
             height: 30px;
-            margin-top: 30px;
             z-index: 999;
             position: absolute;
-        }
-
-        .name {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
+            bottom: 160px;
         }
     </style>
 </head>
@@ -167,22 +180,23 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
 <body>
     <div class="container">
         <div class="view">
+            <!-- Display record name and logout button -->
             <div class="name">
                 <p style="text-align: right"><?= htmlspecialchars($recordName) ?></p>
-                <button onclick="location.href='logout.php'" style="color: red; float: right; height: 30px;">Logout</button>
+                <button id="btnLogout" onclick="location.href='logout.php'">Logout</button>
             </div>
 
+            <!-- Display scan result, alert, time -->
             <div class="result">
                 <h2 id="result">📷 Barcode / QR Code Scanner</h2>
                 <h2 id="time"></h2>
-            </div>
-            <div class="reader">
-                <div id="reader">
-                </div>
+                <p id="alert"></p>
             </div>
 
-            <div id="alert"></div>
+            <div id="reader">
+            </div>
             <div class="input">
+                <input type="text" id="inputCode" oninput="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Input manual...">
                 <select name="unit" id="unit">
                     <?php
                     $retrive_unit = $pdo->prepare("SELECT * FROM tblUnit");
@@ -196,12 +210,11 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
                     }
                     ?>
                 </select>
-
-                <input type="text" id="inputCode" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
             </div>
         </div>
 
         <div class="controller">
+
             <button onclick="flashOn()" id="btnFlash">💡 Flash Off</button>
             <button onclick="startScanner()" id="btnScan">Scan</button>
         </div>
@@ -298,7 +311,9 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
                             }).catch(() => {});
                         }
                     });
+
                 }
+                alertDiv.innerHTML = "";
             }).catch(err => {
                 alertDiv.innerHTML = "❌ Camera error: " + err;
             });
