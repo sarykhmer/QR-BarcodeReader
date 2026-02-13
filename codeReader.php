@@ -59,7 +59,6 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
         }
 
         .container {
-            position: relative;
             width: 100vw;
             height: 90vh;
             max-width: 600px;

@@ -82,7 +82,8 @@ $types = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         ?>
                             <tr>
                                 <td><?= $record['date'] . " " . $record['type'] ?></td>
-                                <td><a href="createRecord_process.php?recordID=<?= $record['recordID'] ?>&name=<?= $record['date'] . "-" . $record['type'] ?>&typeID=<?= $record['typeID'] ?>">Open</a></td>
+                                <td><a href="createRecord_process.php?recordID=<?= $record['recordID'] ?>&name=<?= $record['date'] . "-" . $record['type'] ?>&typeID=<?= $record['typeID'] ?>">📷Scan </a></td>
+                                <td><a href="openRecord.php?recordID=<?= $record['recordID'] ?>"> 📝open record</a></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
