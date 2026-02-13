@@ -1,5 +1,5 @@
 <?php
-require_once 'db.php';
+require "checkrole.php";
 // restrive type form database
 $stmt = $pdo->prepare("SELECT * FROM tbltype");
 $stmt->execute();
@@ -82,7 +82,7 @@ $types = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         ?>
                             <tr>
                                 <td><?= $record['date'] . " " . $record['type'] ?></td>
-                                <td><a href="createRecord_process.php?recordID=<?= $record['recordID'] ?>&name=<?= $record['date'] . "-" . $record['type'] ?>&typeID=<?= $record['typeID'] ?>">📷Scan </a></td>
+                                <td><a href="createRecord_process.php?recordID=<?= $record['recordID'] ?>&name=<?= $record['date'] . "-" . $record['type'] ?>">📷Scan </a></td>
                                 <td><a href="openRecord.php?recordID=<?= $record['recordID'] ?>"> 📝open record</a></td>
                             </tr>
                         <?php endforeach; ?>

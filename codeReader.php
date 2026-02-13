@@ -1,12 +1,14 @@
 <?php
 require 'checkRole.php';
+if (isset($_GET['recordID'])) {
+    $_SESSION['recordID'] = $_GET['recordID'];
+}
 if (!isset($_SESSION['recordID'])) {
-    header("Location: createRecord_form.php");
+    header("Location: login.php");
     exit();
 }
 
 $recordID = $_SESSION['recordID'];
-$typeID = $_SESSION['typeID'];
 $recordName = $_SESSION['recordName'] ?? 'Unknown Record';
 if (isset($_GET['code']) && isset($_GET['timeScan'])) {
 

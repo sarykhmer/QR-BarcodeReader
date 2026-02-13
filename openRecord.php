@@ -11,7 +11,7 @@ if (isset($_GET['field']) && isset($_GET['value']) && isset($_GET['detailID'])) 
     $stmt_update->execute([$value, $detailID]);
 }
 if (!isset($_SESSION['recordID'])) {
-    header("Location: createRecord.php");
+    header("Location: createRecord_form.php");
 }
 $recordID = $_SESSION['recordID'];
 ?>
