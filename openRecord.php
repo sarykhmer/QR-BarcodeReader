@@ -23,12 +23,23 @@ $recordID = $_SESSION['recordID'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Report</title>
     <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <style>
     </style>
 </head>
 
 <body>
     <div class="container" style="border: 1px; border-color: green">
+        <div class="row">
+            <div class="col text-end">
+                <button class="btn btn-sm btn-warning" onclick="window.location.reload()">Update <i class="bi bi-arrow-repeat" style="font-size: large;"></i></button>
+                <button class="btn btn-sm btn-success" onclick="share(<?= $recordID ?>)"><i class="bi bi-share-fill"></i></button>
+                <a href="createRecord_form.php">
+                    <button class="btn btn-danger btn-sm">Exit <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </a>
+            </div>
+        </div>
         <div class="row">
             <div class="col">
                 <img src="ocs-logo.jpeg" alt="ocs_logo" width="100px">
@@ -48,7 +59,7 @@ $recordID = $_SESSION['recordID'];
                 <input class="form-check-input" type="checkbox" id="departure" checked readonly>
                 <label for="departure" class="form-check-label">Departure</label>
                 <input class="form-check-input" type="checkbox" id="arrival" readonly>
-                <label for="departure" class="form-check-label">Arrival</label>
+                <label for="arrival" class="form-check-label">Arrival</label>
             </div>
         </div>
 
@@ -98,6 +109,31 @@ $recordID = $_SESSION['recordID'];
         function updateField(field, detailID) {
             const value = event.target.value;
             window.location.href = `openRecord.php?field=${field}&value=${value}&detailID=${detailID}`;
+        }
+
+        function share(recordID) {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "generateToken.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send(`recordID=${recordID}`);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        const token = response.token;
+                        const shareURL = `${window.location.origin}/qr-barcodereader/gateway.php?token=${token}`;
+                        // Copy to clipboard automatically
+                        navigator.clipboard.writeText(shareURL).then(function() {
+                            alert("Link copied to clipboard!");
+                        }).catch(function(err) {
+                            // Fallback if clipboard API fails
+                            prompt("Share this URL:", shareURL);
+                        });
+                    } else {
+                        alert("Error generating token. Please try again.");
+                    }
+                }
+            }
         }
     </script>
 </body>
