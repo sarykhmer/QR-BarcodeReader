@@ -1,8 +1,5 @@
 <?php
-require 'checkRole.php';
-if (isset($_GET['recordID'])) {
-    $_SESSION['recordID'] = $_GET['recordID'];
-}
+require 'db.php';
 if (!isset($_SESSION['recordID'])) {
     header("Location: login.php");
     exit();

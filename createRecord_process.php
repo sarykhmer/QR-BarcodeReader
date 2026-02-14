@@ -1,4 +1,5 @@
 <?php
+require 'checkRole.php';
 if (isset($_POST['date']) && isset($_POST['type'])) {
     require 'db.php';
     $date = $_POST['date'];
