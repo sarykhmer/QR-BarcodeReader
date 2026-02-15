@@ -38,7 +38,7 @@ $typeID = $_SESSION['typeID'];
             <div class="col text-end">
                 <button class="btn btn-sm btn-warning" onclick="window.location.reload()">Update <i class="bi bi-arrow-repeat" style="font-size: large;"></i></button>
                 <button class="btn btn-sm btn-success" onclick="share(<?= $recordID ?>)"><i class="bi bi-share-fill"></i></button>
-                <button class="btn btn-sm btn-primary"><i class="bi bi-printer-fill"></i></button>
+                <button class="btn btn-sm btn-primary" onclick="openPrint(<?= $recordID ?>)"><i class="bi bi-printer-fill"></i></button>
                 <a href="createRecord_form.php">
                     <button class="btn btn-danger btn-sm">Exit <i class="bi bi-box-arrow-right"></i>
                     </button>
@@ -52,7 +52,7 @@ $typeID = $_SESSION['typeID'];
         </div>
         <div class="row">
             <div class="col text-center">
-                <h2 style="margin-top: -70px;">OOG LOOG</h2>
+                <h2 style="margin-top: -70px;">OOG LOG</h2>
             </div>
         </div>
 
@@ -72,7 +72,7 @@ $typeID = $_SESSION['typeID'];
             <div class="col">
                 <table class="table text-center">
                     <thead>
-                        <th>No</th>
+                        <th>No.</th>
                         <th>Airline</th>
                         <th>Flight Number</th>
                         <th>Serial Number</th>
@@ -139,6 +139,10 @@ $typeID = $_SESSION['typeID'];
                     }
                 }
             }
+        }
+
+        function openPrint(recordID) {
+            window.location.href = `./preview.php?recordID=${recordID}`;
         }
     </script>
 </body>
