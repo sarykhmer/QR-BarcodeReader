@@ -75,7 +75,7 @@ $types = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </thead>
                     <tbody>
                         <?php
-                        $stmt = $pdo->prepare("SELECT r.*, t.type FROM tblRecord r JOIN tblType t ON r.typeID = t.typeID ORDER BY date DESC");
+                        $stmt = $pdo->prepare("SELECT r.recordID, r.date, t.typeID, t.type FROM tblRecord r JOIN tblType t ON r.typeID = t.typeID ORDER BY date DESC");
                         $stmt->execute();
                         $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         foreach ($records as $record) :
@@ -83,7 +83,7 @@ $types = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <tr>
                                 <td><?= $record['date'] . " " . $record['type'] ?></td>
                                 <td><a href="createRecord_process.php?recordID=<?= $record['recordID'] ?>&name=<?= $record['date'] . "-" . $record['type'] ?>">📷Scan </a></td>
-                                <td><a href="openRecord.php?recordID=<?= $record['recordID'] ?>"> 📝open record</a></td>
+                                <td><a href="openRecord.php?recordID=<?= $record['recordID'] ?> &date=<?= $record['date'] ?>&typeID=<?= $record['typeID'] ?>"> 📝open record</a></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

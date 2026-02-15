@@ -1,7 +1,9 @@
 <?php
 require 'checkRole.php';
-if (isset($_GET['recordID'])) {
+if (isset($_GET['recordID']) && isset($_GET['date']) && isset($_GET['typeID'])) {
     $_SESSION['recordID'] = $_GET['recordID'];
+    $_SESSION['date'] = $_GET['date'];
+    $_SESSION['typeID'] = $_GET['typeID'];
 }
 if (isset($_GET['field']) && isset($_GET['value']) && isset($_GET['detailID'])) {
     $field = $_GET['field'];
@@ -14,6 +16,8 @@ if (!isset($_SESSION['recordID'])) {
     header("Location: createRecord_form.php");
 }
 $recordID = $_SESSION['recordID'];
+$date = $_SESSION['date'];
+$typeID = $_SESSION['typeID'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,6 +38,7 @@ $recordID = $_SESSION['recordID'];
             <div class="col text-end">
                 <button class="btn btn-sm btn-warning" onclick="window.location.reload()">Update <i class="bi bi-arrow-repeat" style="font-size: large;"></i></button>
                 <button class="btn btn-sm btn-success" onclick="share(<?= $recordID ?>)"><i class="bi bi-share-fill"></i></button>
+                <button class="btn btn-sm btn-primary"><i class="bi bi-printer-fill"></i></button>
                 <a href="createRecord_form.php">
                     <button class="btn btn-danger btn-sm">Exit <i class="bi bi-box-arrow-right"></i>
                     </button>
@@ -53,19 +58,19 @@ $recordID = $_SESSION['recordID'];
 
         <div class="row">
             <div class="col">
-                <p>Date: 13-Feb-2026</p>
+                <p>Date: <?= htmlspecialchars($date) ?></p>
             </div>
             <div class="col text-end">
-                <input class="form-check-input" type="checkbox" id="departure" checked readonly>
+                <input class="form-check-input" type="checkbox" id="departure" <?= ($typeID == 1) ? 'checked' : '' ?> disabled>
                 <label for="departure" class="form-check-label">Departure</label>
-                <input class="form-check-input" type="checkbox" id="arrival" readonly>
+                <input class="form-check-input ms-3" type="checkbox" id="arrival" <?= ($typeID == 2) ? 'checked' : '' ?> disabled>
                 <label for="arrival" class="form-check-label">Arrival</label>
             </div>
         </div>
 
         <div class="row">
             <div class="col">
-                <table class="table text-center" style="width: 100vw;">
+                <table class="table text-center">
                     <thead>
                         <th>No</th>
                         <th>Airline</th>
