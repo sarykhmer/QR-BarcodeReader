@@ -5,15 +5,9 @@ if (isset($_GET['recordID']) && isset($_GET['date']) && isset($_GET['typeID'])) 
     $_SESSION['date'] = $_GET['date'];
     $_SESSION['typeID'] = $_GET['typeID'];
 }
-if (isset($_GET['field']) && isset($_GET['value']) && isset($_GET['detailID'])) {
-    $field = $_GET['field'];
-    $value = $_GET['value'];
-    $detailID = $_GET['detailID'];
-    $stmt_update = $pdo->prepare("UPDATE tblDetail SET $field=? WHERE detailID=?");
-    $stmt_update->execute([$value, $detailID]);
-}
 if (!isset($_SESSION['recordID'])) {
     header("Location: createRecord_form.php");
+    exit();
 }
 $recordID = $_SESSION['recordID'];
 $date = $_SESSION['date'];
@@ -36,7 +30,7 @@ $typeID = $_SESSION['typeID'];
     <div class="container" style="border: 1px; border-color: green">
         <div class="row">
             <div class="col text-end">
-                <button class="btn btn-sm btn-warning" onclick="window.location.reload()">Update <i class="bi bi-arrow-repeat" style="font-size: large;"></i></button>
+                <button class="btn btn-sm btn-warning" onclick="fetchDetails()">Update <i class="bi bi-arrow-repeat" style="font-size: large;"></i></button>
                 <button class="btn btn-sm btn-success" onclick="share(<?= $recordID ?>)"><i class="bi bi-share-fill"></i></button>
                 <button class="btn btn-sm btn-primary" onclick="openPrint(<?= $recordID ?>)"><i class="bi bi-printer-fill"></i></button>
                 <a href="createRecord_form.php">
@@ -84,22 +78,23 @@ $typeID = $_SESSION['typeID'];
                     </thead>
                     <tbody>
                         <?php
-                        $stmt_retrive = $pdo->prepare("SELECT * FROM tblDetail WHERE recordID=?");
+                        $stmt_retrive = $pdo->prepare("SELECT detailID, airline, fNumber, sNumber, unit, rTime, dTime, total, remark FROM tblDetail WHERE recordID=? ORDER BY detailID DESC");
                         $stmt_retrive->execute([$recordID]);
-                        $details = $stmt_retrive->fetchAll();
-                        $count = 1;
+                        $details = $stmt_retrive->fetchAll(PDO::FETCH_ASSOC);
                         foreach ($details as $detail) {
-                            echo "<tr>";
-                            echo "<td>" . $count++ . "</td>";
-                            echo "<td> <input type='text' value='" . $detail['airline'] . "' onchange='updateField(\"airline\", " . $detail['detailID'] . ")'></td>";
-                            echo "<td> <input type='text' value='" . $detail['fNumber'] . "' onchange='updateField(\"fNumber\", " . $detail['detailID'] . ")'></td>";
-                            echo "<td> <input type='text' value='" . $detail['sNumber'] . "' onchange='updateField(\"sNumber\", " . $detail['detailID'] . ")'></td>";
-                            echo "<td> <input type='text' value='" . $detail['unit'] . "' onchange='updateField(\"unit\", " . $detail['detailID'] . ")'></td>";
-                            echo "<td> <input type='text' value='" . $detail['rTime'] . "' onchange='updateField(\"rTime\", " . $detail['detailID'] . ")'></td>";
-                            echo "<td> <input type='text' value='" . $detail['dTime'] . "' onchange='updateField(\"dTime\", " . $detail['detailID'] . ")'></td>";
-                            echo "<td> <input type='text' value='" . $detail['total'] . "' onchange='updateField(\"total\", " . $detail['detailID'] . ")'></td>";
-                            echo "<td> <input type='text' value='" . $detail['remark'] . "' onchange='updateField(\"remark\", " . $detail['detailID'] . ")'></td>";
-                            echo "</tr>";
+                        ?>
+                            <tr>
+                                <td></td>
+                                <td><input type="text" value="<?= htmlspecialchars($detail['airline']) ?>" onchange="updateField('airline', <?= (int)$detail['detailID'] ?>, this.value)"></td>
+                                <td><input type="text" value="<?= htmlspecialchars($detail['fNumber']) ?>" onchange="updateField('fNumber', <?= (int)$detail['detailID'] ?>, this.value)"></td>
+                                <td><input type="text" value="<?= htmlspecialchars($detail['sNumber']) ?>" onchange="updateField('sNumber', <?= (int)$detail['detailID'] ?>, this.value)"></td>
+                                <td><input type="text" value="<?= htmlspecialchars($detail['unit']) ?>" onchange="updateField('unit', <?= (int)$detail['detailID'] ?>, this.value)"></td>
+                                <td><input type="text" value="<?= htmlspecialchars($detail['rTime']) ?>" onchange="updateField('rTime', <?= (int)$detail['detailID'] ?>, this.value)"></td>
+                                <td><input type="text" value="<?= htmlspecialchars($detail['dTime']) ?>" onchange="updateField('dTime', <?= (int)$detail['detailID'] ?>, this.value)"></td>
+                                <td><input type="text" value="<?= htmlspecialchars($detail['total']) ?>" onchange="updateField('total', <?= (int)$detail['detailID'] ?>, this.value)"></td>
+                                <td><input type="text" value="<?= htmlspecialchars($detail['remark']) ?>" onchange="updateField('remark', <?= (int)$detail['detailID'] ?>, this.value)"></td>
+                            </tr>
+                        <?php
                         }
                         ?>
                     </tbody>
@@ -111,9 +106,81 @@ $typeID = $_SESSION['typeID'];
     </div>
 
     <script>
-        function updateField(field, detailID) {
-            const value = event.target.value;
-            window.location.href = `openRecord.php?field=${field}&value=${value}&detailID=${detailID}`;
+        const recordID = <?= (int)$recordID ?>;
+        const detailsBody = document.querySelector("tbody");
+        let isEditing = false;
+
+        detailsBody.addEventListener("focusin", () => {
+            isEditing = true;
+        });
+        detailsBody.addEventListener("focusout", () => {
+            isEditing = false;
+        });
+
+        function escapeHtml(value) {
+            const div = document.createElement("div");
+            div.textContent = value ?? "";
+            return div.innerHTML;
+        }
+
+        function renderDetails(details) {
+            let html = "";
+            details.forEach((detail, index) => {
+                const rowNo = details.length - index;
+                html += `
+                    <tr>
+                        <td>${rowNo}</td>
+                        <td><input type="text" value="${escapeHtml(detail.airline ?? "")}" onchange="updateField('airline', ${detail.detailID}, this.value)"></td>
+                        <td><input type="text" value="${escapeHtml(detail.fNumber ?? "")}" onchange="updateField('fNumber', ${detail.detailID}, this.value)"></td>
+                        <td><input type="text" value="${escapeHtml(detail.sNumber ?? "")}" onchange="updateField('sNumber', ${detail.detailID}, this.value)"></td>
+                        <td><input type="text" value="${escapeHtml(detail.unit ?? "")}" onchange="updateField('unit', ${detail.detailID}, this.value)"></td>
+                        <td><input type="text" value="${escapeHtml(detail.rTime ?? "")}" onchange="updateField('rTime', ${detail.detailID}, this.value)"></td>
+                        <td><input type="text" value="${escapeHtml(detail.dTime ?? "")}" onchange="updateField('dTime', ${detail.detailID}, this.value)"></td>
+                        <td><input type="text" value="${escapeHtml(detail.total ?? "")}" onchange="updateField('total', ${detail.detailID}, this.value)"></td>
+                        <td><input type="text" value="${escapeHtml(detail.remark ?? "")}" onchange="updateField('remark', ${detail.detailID}, this.value)"></td>
+                    </tr>
+                `;
+            });
+            detailsBody.innerHTML = html;
+        }
+
+        async function fetchDetails() {
+            if (isEditing) return;
+            try {
+                const response = await fetch(`updates.php?action=fetch&recordID=${recordID}`);
+                const data = await response.json();
+                if (!data.success || !Array.isArray(data.details)) {
+                    return;
+                }
+                renderDetails(data.details);
+            } catch (error) {
+                console.error("Polling failed:", error);
+            }
+        }
+
+        async function updateField(field, detailID, value) {
+            try {
+                const body = new URLSearchParams({
+                    action: "update",
+                    field,
+                    value,
+                    detailID: String(detailID),
+                });
+
+                const response = await fetch("updates.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: body.toString(),
+                });
+                const data = await response.json();
+                if (!data.success) {
+                    alert("Update failed.");
+                }
+            } catch (error) {
+                alert("Update failed.");
+            }
         }
 
         function share(recordID) {
@@ -144,6 +211,9 @@ $typeID = $_SESSION['typeID'];
         function openPrint(recordID) {
             window.location.href = `./preview.php?recordID=${recordID}`;
         }
+
+        fetchDetails();
+        setInterval(fetchDetails, 1500);
     </script>
 </body>
 
