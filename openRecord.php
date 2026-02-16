@@ -33,7 +33,7 @@ $typeID = $_SESSION['typeID'];
                 <button class="btn btn-sm btn-warning" onclick="fetchDetails()">Update <i class="bi bi-arrow-repeat" style="font-size: large;"></i></button>
                 <button class="btn btn-sm btn-success" onclick="share(<?= $recordID ?>)"><i class="bi bi-share-fill"></i></button>
                 <button class="btn btn-sm btn-primary" onclick="openPrint(<?= $recordID ?>)"><i class="bi bi-printer-fill"></i></button>
-                <a href="createRecord_form.php">
+                <a href="dashboard.php">
                     <button class="btn btn-danger btn-sm">Exit <i class="bi bi-box-arrow-right"></i>
                     </button>
                 </a>
