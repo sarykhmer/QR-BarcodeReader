@@ -75,8 +75,8 @@ $types = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </thead>
                     <tbody>
                         <?php
-                        $stmt = $pdo->prepare("SELECT r.recordID, r.date, t.typeID, t.type FROM tblRecord r JOIN tblType t ON r.typeID = t.typeID ORDER BY date DESC");
-                        $stmt->execute();
+                        $stmt = $pdo->prepare("SELECT r.recordID, r.date, t.typeID, t.type FROM tblRecord r JOIN tblType t ON r.typeID = t.typeID WHERE t.typeID = ? ORDER BY date DESC");
+                        $stmt->execute([$typeID]);
                         $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         foreach ($records as $record) :
                         ?>
