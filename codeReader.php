@@ -80,10 +80,12 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
         }
 
         #btnLogout {
-            color: red;
-            height: 30px;
-            position: absolute;
-            right: 10px;
+            border-radius: 10px;
+            color: white;
+            float: right;
+            background-color: red;
+            position: fixed;
+            right: 30px;
             top: 10px;
         }
 

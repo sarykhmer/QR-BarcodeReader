@@ -37,11 +37,21 @@ $types = $stmt->fetchAll(PDO::FETCH_ASSOC);
             text-align: center;
         }
 
-        button {
+        .btn-submit {
             background-color: green;
             border-radius: 10px;
             color: white;
             margin: auto;
+        }
+
+        .btn-logout {
+            border-radius: 10px;
+            color: white;
+            float: right;
+            background-color: red;
+            position: fixed;
+            right: 30px;
+            top: 10px;
         }
 
         h1,
@@ -55,6 +65,7 @@ $types = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <div class="container">
         <h1>Create new record</h1>
+        <button class="btn-logout" onclick="window.location.href='logout.php'">logout</button>
         <p style="margin-top: 20px;">Select date and type(Departure/Arrival) to create new record.</p>
         <form action="createRecord_process.php" method="post">
             <div class="input">
@@ -66,7 +77,7 @@ $types = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </select>
             </div>
             <div class="submit">
-                <button type="submit">New Record</button>
+                <button type="submit" class="btn-submit">New Record</button>
             </div>
             <div class="table">
                 <table style="position: relative; margin: auto;">
@@ -75,9 +86,21 @@ $types = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </thead>
                     <tbody>
                         <?php
-                        $stmt = $pdo->prepare("SELECT r.recordID, r.date, t.typeID, t.type FROM tblRecord r JOIN tblType t ON r.typeID = t.typeID WHERE t.typeID = ? ORDER BY date DESC");
-                        $stmt->execute([$typeID]);
-                        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        switch ($roleID) {
+                            case 1:
+                                $query = "SELECT r.recordID, r.date, t.typeID, t.type FROM tblRecord r JOIN tblType t ON r.typeID = t.typeID ORDER BY date DESC";
+                                $stmt = $pdo->prepare($query);
+                                $stmt->execute();
+                                $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                break;
+                            default:
+                                $query = "SELECT r.recordID, r.date, t.typeID, t.type FROM tblRecord r JOIN tblType t ON r.typeID = t.typeID WHERE t.typeID = ? ORDER BY date DESC";
+                                $stmt = $pdo->prepare($query);
+                                $stmt->execute([$typeID]);
+                                $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                break;
+                        }
+
                         foreach ($records as $record) :
                         ?>
                             <tr>
