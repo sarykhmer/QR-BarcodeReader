@@ -39,8 +39,10 @@ $row = $count['totalRow'];
 
         #A4Doc {
             width: 210mm;
-            /* height: 297mm; */
+            height: 297mm;
             margin: auto;
+            /* border: solid 1px;
+            border-color: black; */
         }
     </style>
 </head>
@@ -84,7 +86,7 @@ $row = $count['totalRow'];
                     <th>No.</th>
                     <th>Airline</th>
                     <th>Flight Number</th>
-                    <th>Serial Number</th>
+                    <th>Number</th>
                     <th>Unit/Item</th>
                     <th>Recive Time</th>
                     <th>Deliver Time</th>

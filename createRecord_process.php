@@ -17,10 +17,11 @@ if (isset($_POST['date']) && isset($_POST['type'])) {
         session_start();
         $_SESSION['recordID'] = $recordID;
         $_SESSION['typeID'] = $typeID;
+        $_SESSION['date'] = $date;
         $_SESSION['recordName'] = $recordName;
     }
 
-    header("Location: codeReader.php");
+    header("Location: openRecord.php");
     exit();
 } else {
     $recordID = $_GET['recordID'] ?? null;

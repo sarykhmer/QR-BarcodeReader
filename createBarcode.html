@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Barcode</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 24px;
+            background: #f5f5f5;
+        }
+
+        .card {
+            max-width: 640px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        input,
+        select,
+        button {
+            font-size: 16px;
+            padding: 10px;
+            border: 1px solid #bbb;
+            border-radius: 8px;
+        }
+
+        input,
+        select {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        button {
+            cursor: pointer;
+            background: #1d4ed8;
+            color: #fff;
+            border: none;
+        }
+
+        button:hover {
+            background: #1e40af;
+        }
+
+        #barcodeWrap {
+            margin-top: 16px;
+            text-align: center;
+            padding: 16px;
+            border: 1px dashed #aaa;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        #message {
+            color: #b91c1c;
+            min-height: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h2>Generate Barcode</h2>
+
+        <div class="row">
+            <input type="text" id="value" placeholder="e.g. 123456789012" />
+            <select id="format">
+                <option value="CODE128">CODE128 (recommended)</option>
+                <option value="EAN13">EAN13 (12/13 digits)</option>
+                <option value="EAN8">EAN8 (7/8 digits)</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <button id="btnGenerate" type="button">Generate</button>
+            <button id="btnDownload" type="button">Download PNG</button>
+        </div>
+
+        <p id="message"></p>
+
+        <div id="barcodeWrap">
+            <svg id="barcode"></svg>
+        </div>
+    </div>
+
+    <script src="js/JsBarcode-ganerate.js"></script>
+    <script>
+        const input = document.getElementById("value");
+        const format = document.getElementById("format");
+        const barcode = document.getElementById("barcode");
+        const message = document.getElementById("message");
+        const urlParams = new URLSearchParams(window.location.search);
+
+        function normalizeValue(raw) {
+            return raw.replace(/\s+/g, "").trim();
+        }
+
+        function generateBarcode() {
+            const raw = input.value || "";
+            const value = normalizeValue(raw);
+            if (!value) {
+                message.textContent = "Please enter a barcode value.";
+                return;
+            }
+
+            try {
+                JsBarcode(barcode, value, {
+                    format: format.value,
+                    width: 2,
+                    height: 90,
+                    displayValue: true,
+                    margin: 10
+                });
+                message.textContent = "";
+            } catch (err) {
+                message.textContent = "Invalid value for " + format.value + ".";
+            }
+        }
+
+        function downloadPng() {
+            if (!barcode.innerHTML.trim()) {
+                message.textContent = "Generate a barcode first.";
+                return;
+            }
+
+            const svgData = new XMLSerializer().serializeToString(barcode);
+            const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+            const url = URL.createObjectURL(svgBlob);
+            const img = new Image();
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+
+            img.onload = function () {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+
+                const pngUrl = canvas.toDataURL("image/png");
+                const a = document.createElement("a");
+                a.href = pngUrl;
+                a.download = "barcode.png";
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+
+            img.src = url;
+        }
+
+        document.getElementById("btnGenerate").addEventListener("click", generateBarcode);
+        document.getElementById("btnDownload").addEventListener("click", downloadPng);
+        document.getElementById("value").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                generateBarcode();
+            }
+        });
+
+        // Prefill from URL: createBarcode.html?value=123456&format=CODE128
+        const initialValue = urlParams.get("value");
+        const initialFormat = urlParams.get("format");
+        if (initialValue) {
+            input.value = initialValue;
+        }
+        if (initialFormat) {
+            format.value = initialFormat;
+        }
+        if (initialValue) {
+            generateBarcode();
+        }
+    </script>
+</body>
+
+</html>

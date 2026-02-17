@@ -23,6 +23,9 @@ $typeID = $_SESSION['typeID'];
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <style>
+        input {
+            width: 80%;
+        }
     </style>
 </head>
 
@@ -132,7 +135,7 @@ $typeID = $_SESSION['typeID'];
                         <td>${rowNo}</td>
                         <td><input type="text" value="${escapeHtml(detail.airline ?? "")}" onchange="updateField('airline', ${detail.detailID}, this.value)"></td>
                         <td><input type="text" value="${escapeHtml(detail.fNumber ?? "")}" onchange="updateField('fNumber', ${detail.detailID}, this.value)"></td>
-                        <td><input type="text" value="${escapeHtml(detail.sNumber ?? "")}" onchange="updateField('sNumber', ${detail.detailID}, this.value)"></td>
+                        <td> <i class="bi bi-eye-fill" onclick='viewBarcode(${JSON.stringify(detail.sNumber ?? "")})'> <input type="text" value="${escapeHtml(detail.sNumber ?? "")}" onchange="updateField('sNumber', ${detail.detailID}, this.value)"></></td>
                         <td><input type="text" value="${escapeHtml(detail.unit ?? "")}" onchange="updateField('unit', ${detail.detailID}, this.value)"></td>
                         <td><input type="text" value="${escapeHtml(detail.rTime ?? "")}" onchange="updateField('rTime', ${detail.detailID}, this.value)"></td>
                         <td><input type="text" value="${escapeHtml(detail.dTime ?? "")}" onchange="updateField('dTime', ${detail.detailID}, this.value)"></td>
@@ -214,6 +217,10 @@ $typeID = $_SESSION['typeID'];
 
         fetchDetails();
         setInterval(fetchDetails, 1500);
+
+        function viewBarcode(sNumber) {
+            window.open(`createBarcode.html?value=${encodeURIComponent(sNumber)}`, '_blank', 'width=600,height=400');
+        }
     </script>
 </body>
 
