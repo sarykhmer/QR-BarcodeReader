@@ -7,6 +7,7 @@ if (!isset($_SESSION['recordID'])) {
 
 $recordID = $_SESSION['recordID'];
 $recordName = $_SESSION['recordName'] ?? 'Unknown Record';
+$timeIn = '';
 if (isset($_GET['code']) && isset($_GET['timeScan'])) {
 
     $code = trim($_GET['code']);
@@ -29,6 +30,7 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
         }
     } elseif ($exist) {
         // if code exist, update dTime
+        $timeIn = $exist['rTime'] ?? '';
         try {
             $stmt_update = $pdo->prepare("UPDATE tblDetail SET dTime = ? WHERE recordID = ? AND sNumber = ?");
             $stmt_update->execute([$timeScan, $recordID, $code]);
@@ -87,6 +89,18 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             position: fixed;
             right: 30px;
             top: 10px;
+            font-size: 14px;
+        }
+
+        .btnExit {
+            border-radius: 10px;
+            color: white;
+            float: right;
+            background-color: red;
+            position: fixed;
+            right: 110px;
+            top: 10px;
+            font-size: 14px;
         }
 
         .input {
@@ -183,13 +197,18 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             <!-- Display record name and logout button -->
             <div class="name">
                 <p style="text-align: right"><?= htmlspecialchars($recordName) ?></p>
+                <button class="btnExit" onclick="location.href='dashboard.php'">Exit ></button>
                 <button id="btnLogout" onclick="location.href='logout.php'">Logout</button>
             </div>
 
             <!-- Display scan result, alert, time -->
             <div class="result">
+
                 <h2 id="result">📷 Barcode / QR Code Scanner</h2>
                 <h2 id="time"></h2>
+                <?php if ($timeIn !== ""): ?>
+                    <h2 style="color: red; margin-top: 100px"><?= "Time In: " . date("H:i", strtotime($timeIn)); ?></h2>
+                <?php endif ?>
                 <p id="alert"></p>
             </div>
 

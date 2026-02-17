@@ -26,13 +26,24 @@ $typeID = $_SESSION['typeID'];
         input {
             width: 80%;
         }
+
+        #txtSearch {
+            float: right;
+            max-width: 400px;
+        }
     </style>
 </head>
 
 <body>
     <div class="container" style="border: 1px; border-color: green">
         <div class="row">
-            <div class="col text-end">
+            <div class="col">
+                <img src="ocs-logo.jpeg" alt="ocs_logo" width="100px">
+            </div>
+            <div class="col text-center">
+                <h2 style="margin-top: 20px">OOG LOG</h2>
+            </div>
+            <div class="col text-end mt-3">
                 <button class="btn btn-sm btn-warning" onclick="fetchDetails()">Update <i class="bi bi-arrow-repeat" style="font-size: large;"></i></button>
                 <button class="btn btn-sm btn-success" onclick="share(<?= $recordID ?>)"><i class="bi bi-share-fill"></i></button>
                 <button class="btn btn-sm btn-primary" onclick="openPrint(<?= $recordID ?>)"><i class="bi bi-printer-fill"></i></button>
@@ -43,16 +54,14 @@ $typeID = $_SESSION['typeID'];
             </div>
         </div>
         <div class="row">
-            <div class="col">
-                <img src="ocs-logo.jpeg" alt="ocs_logo" width="100px">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col text-center">
-                <h2 style="margin-top: -70px;">OOG LOG</h2>
-            </div>
-        </div>
+            <div class="col mb-3">
+                <div class="input-group d-flex justify-content-end">
+                    <input type="text" class="form-control" id="txtSearch" placeholder="Search ...">
+                    <button class="btn btn-outline-danger" onclick="clearSearch()"><i class="bi bi-x-lg"></i></button>
+                </div>
 
+            </div>
+        </div>
         <div class="row">
             <div class="col">
                 <p>Date: <?= htmlspecialchars($date) ?></p>
@@ -113,6 +122,12 @@ $typeID = $_SESSION['typeID'];
         const detailsBody = document.querySelector("tbody");
         let isEditing = false;
 
+        // const txtSearch = document.getElementById("txtSearch");
+        // let keyWord = txtSearch.value;
+        // txtSearch.addEventListener("input", () => {
+        //     keyWord = txtSearch.value;
+        // });
+
         detailsBody.addEventListener("focusin", () => {
             isEditing = true;
         });
@@ -148,9 +163,11 @@ $typeID = $_SESSION['typeID'];
         }
 
         async function fetchDetails() {
+            const txtSearch = document.getElementById("txtSearch");
+            let keyWord = txtSearch.value;
             if (isEditing) return;
             try {
-                const response = await fetch(`updates.php?action=fetch&recordID=${recordID}`);
+                const response = await fetch(`updates.php?action=fetch&recordID=${recordID}&keyWord=${keyWord}`);
                 const data = await response.json();
                 if (!data.success || !Array.isArray(data.details)) {
                     return;
@@ -215,11 +232,19 @@ $typeID = $_SESSION['typeID'];
             window.location.href = `./preview.php?recordID=${recordID}`;
         }
 
-        fetchDetails();
-        setInterval(fetchDetails, 1500);
+
 
         function viewBarcode(sNumber) {
             window.open(`createBarcode.html?value=${encodeURIComponent(sNumber)}`, '_blank', 'width=600,height=400');
+        }
+
+
+        fetchDetails();
+        setInterval(fetchDetails, 1500);
+
+
+        function clearSearch() {
+            txtSearch.value = "";
         }
     </script>
 </body>
