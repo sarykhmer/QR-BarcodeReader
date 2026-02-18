@@ -11,12 +11,42 @@ if (isset($_GET['token'])) {
     }
     $recordID = $recordInfo['recordID'];
     $recordName = $recordInfo['date'] . ' - ' . $recordInfo['type'];
-    session_start();
     $_SESSION['recordID'] = $recordID;
     $_SESSION['recordName'] = $recordName;
-    header("Location: codeReader.php");
-    exit();
+    echo "<script> window.open('codeReader.php','_blank')</script>";
 } else {
     header("location: login.php");
     exit();
 }
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gateway</title>
+    <style>
+        button {
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+            font-size: 16px;
+            color: black;
+            position: fixed;
+            bottom: 50%;
+            left: 50%;
+            margin: auto;
+            background-color: greenyellow;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <button onclick="window.location.reload()">Re-Open Page</button>
+    </div>
+</body>
+
+</html>
