@@ -112,11 +112,11 @@ $row = $count['totalRow'];
                     </tr>
                 </tbody>
             </table>
-            <div style="width: 100%;">
-                <div style="width: 50%; float: right;">
+            <div class="row">
+                <div class="col">
                     <p class="footer ms-5">Prepared by</p>
                 </div>
-                <div style="width: 50%;">
+                <div class="col">
                     <p class="footer ms-5">Veryfied By</p>
                 </div>
             </div>
