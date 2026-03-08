@@ -150,7 +150,7 @@ $typeID = $_SESSION['typeID'];
                         <td>${rowNo}</td>
                         <td><input type="text" value="${escapeHtml(detail.airline ?? "")}" onchange="updateField('airline', ${detail.detailID}, this.value)"></td>
                         <td><input type="text" value="${escapeHtml(detail.fNumber ?? "")}" onchange="updateField('fNumber', ${detail.detailID}, this.value)"></td>
-                        <td> <i class="bi bi-eye-fill" onclick='viewBarcode(${JSON.stringify(detail.sNumber ?? "")})'> <input type="text" value="${escapeHtml(detail.sNumber ?? "")}" onchange="updateField('sNumber', ${detail.detailID}, this.value)"></></td>
+                        <td> <i class="bi bi-eye-fill" onclick='viewBarcode(${JSON.stringify(detail.sNumber ?? "")})'></i> <input type="text" value="${escapeHtml(detail.sNumber ?? "")}" onchange="updateField('sNumber', ${detail.detailID}, this.value)"></td>
                         <td><input type="text" value="${escapeHtml(detail.unit ?? "")}" onchange="updateField('unit', ${detail.detailID}, this.value)"></td>
                         <td><input type="text" value="${escapeHtml(detail.rTime ?? "")}" onchange="updateField('rTime', ${detail.detailID}, this.value)"></td>
                         <td><input type="text" value="${escapeHtml(detail.dTime ?? "")}" onchange="updateField('dTime', ${detail.detailID}, this.value)"></td>

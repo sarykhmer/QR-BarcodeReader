@@ -45,7 +45,7 @@ if (isset($_GET['token'])) {
 
 <body>
     <div>
-        <button onclick="window.location.reload()">Re-Open Page</button>
+        <button onclick="">Re-Open Page</button>
     </div>
 </body>
 

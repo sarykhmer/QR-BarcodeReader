@@ -128,6 +128,45 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
         #reader {
             width: 100%;
             z-index: 999;
+            position: relative;
+        }
+
+        /* Red laser scan line centered over the reader — hidden by default */
+        #reader::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: red;
+            box-shadow: 0 0 8px 2px rgba(255, 0, 0, 0.7);
+            transform: translateY(-50%);
+            z-index: 1000;
+            pointer-events: none;
+            animation: scanPulse 2s ease-in-out infinite;
+            display: none;
+        }
+
+        #reader.scanning::after {
+            display: block;
+        }
+
+        @keyframes scanPulse {
+            0% {
+                opacity: 1;
+                box-shadow: 0 0 8px 2px rgba(255, 0, 0, 0.7);
+            }
+
+            50% {
+                opacity: 0.5;
+                box-shadow: 0 0 4px 1px rgba(255, 0, 0, 0.4);
+            }
+
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 8px 2px rgba(255, 0, 0, 0.7);
+            }
         }
 
         #result {
@@ -298,7 +337,8 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             aspectRatio: 1,
             disableFlip: false,
             rememberLastUsedCamera: true,
-            showTorchButtonIfSupported: true
+            showTorchButtonIfSupported: true,
+
         };
         clearTimeout(scanTimeout);
 
@@ -315,6 +355,7 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
                 btnScan.onclick = stopScanner;
                 result.textContent = "📷 Scanning...";
                 timeDisplay.textContent = "";
+                readerDiv.classList.add("scanning");
                 if (cameras && cameras.length) {
                     // Prefer back camera
                     let selectedCamera = cameras[0];
@@ -352,6 +393,7 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
                 btnScan.style.color = "green";
                 result.textContent = "📷 Scanner stopped";
                 btnScan.onclick = startScanner;
+                readerDiv.classList.remove("scanning");
             });
         }
 
@@ -376,6 +418,7 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             console.log(decodedResult);
             // Stop scanning (best-effort), then redirect with code and timeScan params
             html5QrCode.stop().catch(() => {}).then(() => {
+                readerDiv.classList.remove("scanning");
                 submitCode(decodedText, unit);
             });
         }
