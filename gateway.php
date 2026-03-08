@@ -13,13 +13,13 @@ if (isset($_GET['token'])) {
     $recordName = $recordInfo['date'] . ' - ' . $recordInfo['type'];
     $_SESSION['recordID'] = $recordID;
     $_SESSION['recordName'] = $recordName;
-    echo "<script> window.open('codeReader.php','_blank')</script>";
+    header("location: codeReader.php");
+    // echo "<script> window.open('codeReader.php','_blank')</script>";
 } else {
     header("location: login.php");
     exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 

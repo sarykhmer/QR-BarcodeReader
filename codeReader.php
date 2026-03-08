@@ -143,6 +143,13 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             margin-top: 60px;
         }
 
+        #timeIn {
+            z-index: 1000;
+            color: red;
+            position: absolute;
+            margin-top: 120px;
+        }
+
         #alert {
             z-index: 1000;
             margin-top: 100px;
@@ -207,7 +214,7 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
                 <h2 id="result">📷 Barcode / QR Code Scanner</h2>
                 <h2 id="time"></h2>
                 <?php if ($timeIn !== ""): ?>
-                    <h2 style="color: red; margin-top: 100px"><?= "Time In: " . date("H:i", strtotime($timeIn)); ?></h2>
+                    <h2 id="timeIn"><?= "Time In: " . date("H:i", strtotime($timeIn)); ?></h2>
                 <?php endif ?>
                 <p id="alert"></p>
             </div>
@@ -286,7 +293,7 @@ if (isset($_GET['code']) && isset($_GET['timeScan'])) {
             fps: 20,
             qrbox: {
                 width: 300,
-                height: 300
+                height: 200
             },
             aspectRatio: 1,
             disableFlip: false,
